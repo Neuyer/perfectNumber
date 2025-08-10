@@ -35,23 +35,28 @@ public class PerfectNumber {
     /**
      * Finds all perfect numbers within a given range (inclusive).
      *
-     * @param start The start of the range.
-     * @param end   The end of the range.
+     * @param numbers A list of numbers in the specified range.
      * @return A list of perfect numbers in the specified range.
      */
-    public List<Integer> findPerfectNumbersInRange(List<Integer> numbers, int start, int end) {
+    public List<Integer> findPerfectNumbersInArray(List<Integer> numbers) {
         List<Integer> perfectNumbers = new ArrayList<>();
 
         if (numbers == null || numbers.isEmpty())
             return perfectNumbers;
 
+        numbers.sort(Integer::compareTo);
+
+        var start = numbers.getFirst();
+        var end = numbers.getLast();
+
         if (start > end)
             throw new PerfectNumberException("Invalid range: start cannot be greater than end.");
 
-        numbers.forEach(i -> {
-            if (i >= start && i <= end && isPerfect(i))
+        for (int i = Math.max(1, start); i <= end; i++) {
+            if (isPerfect(i)) {
                 perfectNumbers.add(i);
-        });
+            }
+        }
 
         return perfectNumbers;
     }
