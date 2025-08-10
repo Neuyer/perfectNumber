@@ -32,7 +32,7 @@ public class FindPerfectNumbersUseCase {
         var numbers = input.numbers();
         var perfectNumbers = perfectNumber.findPerfectNumbersInArray(numbers);
 
-        audit.updateResult(perfectNumbers.subList(0, 4).toString());
+        audit.updateResult(perfectNumbers.toString());
         auditRegistryGateway.saveAuditRegistry(audit);
 
         log.info("Find perfect numbers result: {}", perfectNumbers);

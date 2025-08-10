@@ -44,15 +44,14 @@ public class PerfectNumber {
         if (numbers == null || numbers.isEmpty())
             return perfectNumbers;
 
-        numbers.sort(Integer::compareTo);
-
         var start = numbers.getFirst();
         var end = numbers.getLast();
 
         if (start > end)
             throw new PerfectNumberException("Invalid range: start cannot be greater than end.");
 
-        for (int i = Math.max(1, start); i <= end; i++) {
+        for (int i = Math.max(1, start); i <= end && i <= 1000000; i++) {
+            System.out.println(i);
             if (isPerfect(i)) {
                 perfectNumbers.add(i);
             }
