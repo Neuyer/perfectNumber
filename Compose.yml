@@ -1,0 +1,37 @@
+services:
+  perfect-number-application:
+    build: ./
+    networks:
+      - "perfect-number-network"
+    ports:
+      - "8080:8080"
+    links:
+      - "postgres:servicedb"
+    depends_on:
+      - "postgres"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/perfect_number
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: perfect_number_password
+  postgres:
+    networks:
+      - "perfect-number-network"
+    ports:
+      - "5432:5432"
+    container_name: my-postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres # The user for the new database.
+      POSTGRES_PASSWORD: perfect_number_password # The password for the new user.
+      POSTGRES_DB: perfect_number # The name of the database to be created.
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    image: postgres:latest
+networks:
+  perfect-number-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+volumes:
+  postgres-data:
