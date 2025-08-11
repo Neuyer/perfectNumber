@@ -1,17 +1,17 @@
 package com.neumeyer.perfectnumber.infrastructure.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
-@Table(name = "audit_logs")
+@Data
 @Entity
 @Builder
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "audit_logs")
+@EqualsAndHashCode(callSuper = true)
 public class AuditRegistryModel extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,6 +7,8 @@ import com.neumeyer.perfectnumber.infrastructure.repository.AuditLogsRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Log4j2
 public class AuditRegistryGatewayImpl implements AuditRegistryGateway {
@@ -29,5 +31,19 @@ public class AuditRegistryGatewayImpl implements AuditRegistryGateway {
 
         auditLogsRepository.save(model);
         log.info("audit_log saved {}", model);
+    }
+
+    @Override
+    public List<AuditRegistry> listAll() {
+        return auditLogsRepository.findAll()
+                .stream()
+                .map(auditRegistryModel ->
+                        AuditRegistry.load(
+                                auditRegistryModel.getIp(),
+                                auditRegistryModel.getUseCase(),
+                                auditRegistryModel.getResult(),
+                                auditRegistryModel.getRequestTime()
+                        ))
+                .toList();
     }
 }

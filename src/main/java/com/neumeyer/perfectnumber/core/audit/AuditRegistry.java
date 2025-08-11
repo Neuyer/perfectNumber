@@ -27,6 +27,21 @@ public class AuditRegistry {
         return startTime;
     }
 
+    private AuditRegistry(String ip, String useCase, String result, LocalDateTime startTime) {
+        if (ip == null)
+            throw new PerfectNumberException("ip must not be null");
+        this.ip = ip;
+        if (useCase == null)
+            throw new PerfectNumberException("use case must not be null");
+        this.useCase = useCase;
+        if (result == null)
+            throw new PerfectNumberException("result case must not be null");
+        this.result = result;
+        if (startTime == null)
+            throw new PerfectNumberException("startTime must not be null");
+        this.startTime = startTime;
+    }
+
     private AuditRegistry(InetAddress ip, Class<?> useCase) {
         if (ip == null)
             throw new PerfectNumberException("ip must not be null");
@@ -39,6 +54,10 @@ public class AuditRegistry {
 
     public static AuditRegistry create(InetAddress ip, Class<?> event) {
         return new AuditRegistry(ip, event);
+    }
+
+    public static AuditRegistry load(String ip, String useCase, String result, LocalDateTime startTime) {
+        return new AuditRegistry(ip, useCase, result, startTime);
     }
 
     public void updateResult(String result) {
