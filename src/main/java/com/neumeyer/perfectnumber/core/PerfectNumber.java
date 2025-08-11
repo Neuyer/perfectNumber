@@ -3,7 +3,11 @@ package com.neumeyer.perfectnumber.core;
 import com.neumeyer.perfectnumber.core.exception.PerfectNumberException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PerfectNumber {
 
@@ -40,9 +44,43 @@ public class PerfectNumber {
      */
     public List<Integer> findPerfectNumbersInArray(List<Integer> numbers) {
         List<Integer> perfectNumbers = new ArrayList<>();
+        List<Runnable> chunks = new ArrayList<>();
 
         if (numbers == null || numbers.isEmpty())
             return perfectNumbers;
+
+        var subLists = divideArray(numbers);
+
+        subLists.forEach(sublist -> chunks.add(() -> perfectNumbers.addAll(findPerfectNumbers(sublist))));
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
+        chunks.stream().map(runnable -> CompletableFuture.runAsync(runnable, executor)).toList().forEach(CompletableFuture::join);
+
+        return perfectNumbers;
+    }
+
+    private List<List<Integer>> divideArray(List<Integer> numbers) {
+        List<List<Integer>> sublists = new ArrayList<>();
+
+        int chunkSize = 4;
+
+        int numberOfSubLists = (int) Math.ceil((double) numbers.size() / chunkSize);
+
+        for (int i = 0; i < numberOfSubLists; i++) {
+            int start = i * chunkSize;
+            int fim = Math.min(start + chunkSize, numbers.size());
+
+            var list = Arrays.copyOfRange(numbers.toArray(), start, fim);
+            List<Integer> sublist = new ArrayList<>();
+            Arrays.stream(list).forEach(o -> sublist.add((Integer) o));
+            sublists.add(sublist);
+        }
+        return sublists;
+    }
+
+    private List<Integer> findPerfectNumbers(List<Integer> numbers) {
+        List<Integer> perfectNumbers = new ArrayList<>();
 
         var start = numbers.getFirst();
         var end = numbers.getLast();
@@ -51,12 +89,10 @@ public class PerfectNumber {
             throw new PerfectNumberException("Invalid range: start cannot be greater than end.");
 
         for (int i = Math.max(1, start); i <= end && i <= 1000000; i++) {
-            System.out.println(i);
             if (isPerfect(i)) {
                 perfectNumbers.add(i);
             }
         }
-
         return perfectNumbers;
     }
 
